@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Hot Wheels Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .star-rating span {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .star-rating span:hover {
+            transform: scale(1.2);
+        }
+        .car-card {
+            transition: all 0.3s ease;
+            background-color: #07575b;
+            border: 2px solid #66a5ad;
+        }
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(241, 211, 188, 0.3);
+        }
+        .details-box {
+            background: rgba(38, 47, 52, 0.8);
+            border: 1px solid #66a5ad;
+        }
+        .comment-box {
+            background: rgba(38, 47, 52, 0.8);
+            border: 1px solid #66a5ad;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #262f34;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #66a5ad;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #66a5ad;
+        }
+        body {
+            background-color: #003b46;
+            color: #66a5ad;
+        }
+        .nav-link {
+            color: #66a5ad;
+        }
+        .nav-link:hover {
+            background-color: #66a5ad;
+        }
+        .btn-primary {
+            background-color: #66a5ad;
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            background-color: #66a5ad;
+        }
+        .btn-secondary {
+            background-color: #66a5ad;
+            color: #f1d3bc;
+        }
+        .btn-secondary:hover {
+            background-color: #66a5ad;
+        }
+        .text-accent {
+            color: #ffffff;
+        }
+        .border-accent {
+            border-color: #66a5ad;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white-900 p-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <i class="fas fa-car text-2xl text-white-500 mr-2"></i>
+                <h1 class="text-xl font-bold text-white-500">My Hot Wheels</h1>
+            </div>
+            <div class="flex space-x-1 md:space-x-4">
+                <a href="#home" class="nav-link px-3 py-2 rounded-lg transition">
+                    <i class="fas fa-home mr-2"></i>Collection
+                </a>
+                <a href="#liked" class="nav-link px-3 py-2 rounded-lg transition">
+                    <i class="fas fa-star mr-2"></i>Favorites
+                </a>
+                <a href="#bookmarked" class="nav-link px-3 py-2 rounded-lg transition">
+                    <i class="fas fa-box-open mr-2"></i>Storage
+                </a>
+                <a href="#profile" class="nav-link px-3 py-2 rounded-lg transition">
+                    <i class="fas fa-user mr-2"></i>Profile
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Home Section -->
+        <div id="home" class="section">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-white-500 mb-4 md:mb-0">My Hot Wheels Collection</h2>
+                <div class="relative w-full md:w-64">
+                    <input type="text" id="searchBox" placeholder="Search cars..." 
+                           class="w-full bg-white-800 border border-white-500 rounded-lg py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-white-500 text-white"
+                           oninput="searchCars()">
+                    <i class="fas fa-search absolute left-3 top-3 text-black-400"></i>
+                </div>
+            </div>
+            
+            <div class="car-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="carList"></div>
+        </div>
+
+        <!-- Car Detail Section -->
+        <div id="carDetail" class="section hidden">
+          
+            <!-- <button onclick="goBackTo()" class="btn-primary py-2 px-4 rounded-lg mb-6 transition">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Collection   
+            </button> -->
+            <a href="" class="btn-primary py-2 px-8 rounded-lg mb-10 transition">
+              <i class=></i>Back to Collection
+            </a>
+            <script>
+              console.log("berhasil")
+            </script>
+            
+            <div class="flex flex-col lg:flex-row gap-8 mt-4">
+                <!-- Image Column -->
+                <div class="w-full lg:w-1/3">
+                    <img id="carImage" src="" alt="Hot Wheels Car" class="w-full rounded-lg shadow-xl border-2 border-white-500">
+                    
+                    <div class="mt-6 flex space-x-4">
+                        <button id="likeBtn" onclick="toggleLike()" class="flex-1 btn-primary py-2 px-4 rounded-lg transition">
+                            <i class="fas fa-star mr-2"></i><span>Favorite</span>
+                        </button>
+                        <button id="bookmarkBtn" onclick="toggleBookmark()" class="flex-1 btn-secondary py-2 px-4 rounded-lg transition">
+                            <i class="fas fa-box-open mr-2"></i><span>Storage</span>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6 details-box p-4 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-2 text-white-500">Details</h3>
+                        <p id="carYear" class="mb-1"><span class="font-medium">Year:</span> <span class="text-gray-300"></span></p>
+                        <p id="carSeries" class="mb-1"><span class="font-medium">Series:</span> <span class="text-gray-300"></span></p>
+                        <p id="carColor" class="mb-1"><span class="font-medium">Color:</span> <span class="text-gray-300"></span></p>
+                        <p id="carNumber" class="mb-1"><span class="font-medium">Number:</span> <span class="text-gray-300"></span></p>
+                    </div>
+                </div>
+                
+                <!-- Content Column -->
+                <div class="w-full lg:w-2/3">
+                    <h1 id="carName" class="text-3xl font-bold mb-2 text-white-500"></h1>
+                    
+                    <div class="details-box p-6 rounded-lg mb-6">
+                        <h3 class="text-xl font-semibold mb-3 text-white-500">Description</h3>
+                        <p id="carDescription" class="text-gray-300 leading-relaxed"></p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold mb-3 text-white-500">Condition Rating</h3>
+                        <div class="star-rating text-2xl mb-2" id="starContainer"></div>
+                        <p class="text-sm text-gray-400">Rate the condition of your car</p>
+                    </div>
+                    
+                    <div class="comment-box p-6 rounded-lg">
+                        <h3 class="text-xl font-semibold mb-3 text-white-500">Add Note</h3>
+                        <form onsubmit="addComment(event)">
+                            <div class="mb-4">
+                                <label for="commentName" class="block text-sm font-medium mb-1">Note Title</label>
+                                <input type="text" id="commentName" required 
+                                       class="w-full bg-gray-800 border border-white-500 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-white-500 text-white">
+                            </div>
+                            <div class="mb-4">
+                                <label for="commentBox" class="block text-sm font-medium mb-1">Note Content</label>
+                                <textarea id="commentBox" rows="4" required
+                                          class="w-full bg-gray-800 border border-white-500 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-white-500 text-white"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary py-2 px-6 rounded-lg transition">
+                                <i class="fas fa-save mr-2"></i>Save Note
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold mb-4 text-white-500">My Notes</h3>
+                        <div id="commentSection" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile" class="section hidden">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-white-500">Collector Profile</h2>
+                <button onclick="resetStorage()" class="btn-primary py-2 px-4 rounded-lg mt-4 md:mt-0 transition">
+                    <i class="fas fa-sync-alt mr-2"></i>Reset Data
+                </button>
+            </div>
+            
+            <div class="details-box rounded-lg p-6 mb-8">
+                <div class="flex items-center mb-4">
+                    <div class="bg-white-500 rounded-full w-16 h-16 flex items-center justify-center text-2xl">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-semibold">Collector Name</h3>
+                        <p id="profileName" class="text-gray-300">Guest</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-semibold mb-4 text-white-500">Collection Stats</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="details-box p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-white-500 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white-400">Total Cars</p>
+                            <p class="text-xl font-bold" id="totalCars">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="details-box p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-white-500 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white-400">Favorites</p>
+                            <p class="text-xl font-bold" id="favoriteCars">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="details-box p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="bg-white-500 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-white-400">In Storage</p>
+                            <p class="text-xl font-bold" id="storedCars">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-semibold mb-4 text-white-500">Recent Notes</h3>
+            <div id="userReviews" class="details-box rounded-lg p-6">
+                <p class="text-gray-400 italic">No notes yet. Start adding notes to your cars!</p>
+            </div>
+        </div>
+
+        <!-- Liked Section -->
+        <div id="liked" class="section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-white-500">Favorite Cars</h2>
+                <button onclick="goBack()" class="btn-primary py-2 px-4 rounded-lg transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Collection
+                </button>
+            </div>
+            
+            <div class="car-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="likedList">
+                <p class="text-gray-400 italic col-span-full text-center py-8">No favorite cars yet. Start adding some!</p>
+            </div>
+        </div>
+
+        <!-- Bookmarked Section -->
+        <div id="bookmarked" class="section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-white-500">Cars in Storage</h2>
+                <button onclick="goBack()" class="btn-primary py-2 px-4 rounded-lg transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Collection
+                </button>
+            </div>
+            
+            <div class="car-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="bookmarkList">
+                <p class="text-gray-400 italic col-span-full text-center py-8">No cars in storage yet. Start storing some!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">© 2025 Albani Hot Wheels Collection</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white-500 transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white-500 transition"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white-500 transition"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample Hot Wheels collection data
+        const cars = [
+            {
+                name: "'73 BMW 3.0 CSL RACE CAR",
+                year: "2021",
+                series: "HW Showroom",
+                color: "Orange",
+                number: "1/5",
+                image: "https://www.perfectoys.gr/uplds/308636_458503-1.jpg",
+                description: "Hot Wheels Gran Turismo '73 BMW 3.0 CSL Race Car adalah mobil model skala 1/64 yang menampilkan versi balap dari BMW 3.0 CSL tahun 1973. Model ini masuk dalam seri Gran Turismo dari Hot Wheels, yang terkenal dengan kualitas dan detailnya yang tinggi. "
+            },
+            {
+                name: "2020 KOENIGSEGG JESKO",
+                year: "2024",
+                series: "HW EXOTICS",
+                color: "Jeruk Tang",
+                number: "184/250",
+                image: "https://m.media-amazon.com/images/I/51KmaKhGzhL._AC_UF1000,1000_QL80_.jpg",
+                description: "Hot Wheels 2020 Koenigsegg Jesko ini hadir dengan bodi berwarna oranye terang, dihiasi decal dua garis hitam di tengah kap dan atap, serta dilengkapi sayap belakang besar dan pelek hitam sporty. Termasuk dalam seri HW EXOTICS tahun 2022."
+            },
+            {
+                name: "'71 Lamborghini Miura SV",
+                year: "2025",
+                series: "	HW: '70s vs. '90s",
+                color: "Red",
+                number: "078/250",
+                image: "https://i.ebayimg.com/images/g/G~YAAOSwvMtnXX3q/s-l400.jpg",
+                description: "Hot Wheels Lamborghini Miura ini hadir dengan bodi berwarna merah mengkilap, detail lampu depan tercetak, dan pelek chrome klasik. Menampilkan desain ikonik mesin tengah dari era 1960-an, model ini merupakan penghormatan pada supercar legendaris Lamborghini."
+            },
+            {
+                name: "ORACLE RED BULL RACING",
+                year: "2025",
+                series: "TRAK ACES",
+                color: "Black",
+                number: "059/250",
+                image: "https://i.ebayimg.com/images/g/zpMAAOSw4V5nP~H-/s-l1200.jpg",
+                description: "Hot Wheels Oracle Red Bull Racing menampilkan bodi berwarna biru tua dengan livery sponsor Red Bull khas, termasuk logo banteng merah dan aksen kuning pada hidung mobil. Didesain menyerupai mobil F1 modern, lengkap dengan sayap depan dan belakang, serta pelek hitam bergaya balap."
+            },
+            {
+                name: "PORSCHE 911 TURBO 3.6 (964)",
+                year: "2023",
+                series: "TOONED",
+                color: "Black",
+                number: "234/250",
+                image: "https://down-id.img.susercontent.com/file/id-11134207-7rasc-m5zgk3kp7grcce",
+                description: "Hot Wheels Porsche 911 Turbo 3.6 (964) versi Tooned hadir dengan desain bergaya kartun yang unik, proporsi bodi yang membesar, sayap belakang besar, serta detail wajah lucu namun tetap mempertahankan ciri khas 911."
+            },
+            {
+                name: "'87 AUDI QUATRO",
+                year: "2025",
+                series: "Factory Fresh",
+                color: "Metalflake Teal",
+                number: "16/250",
+                image: "https://i.ebayimg.com/images/g/1OIAAOSwuFJmxCSJ/s-l1200.jpg",
+                description: "Hot Wheels '87 Audi Quattro menampilkan desain rally legendaris dengan bodi kotak khas era 80-an, lengkap dengan detail kap mesin berventilasi, spoiler belakang, dan pelek bergaya reli."
+            },
+            {
+                name: "MASERAT SHAMAL",
+                year: "2025",
+                series: "HW Metro",
+                color: "Nero Siderale",
+                number: "058/250",
+                image: "https://images.tokopedia.net/img/cache/700/VqbcmM/2025/3/11/c4400e23-e35b-4df3-8625-14cfb540868b.jpg",
+                description: "Hot Wheels Maserati Shamal menampilkan desain coupe klasik dengan garis tajam khas tahun 90-an, dilengkapi detail kap rendah, overfender lebar, dan pelek bergaya sporty yang mencerminkan karakter grand tourer bertenaga."
+            },
+            {
+                name: "LAMBORGHINI HURACAN STERRATO",
+                year: "2025", 
+                series: "Safari Mode",
+                color: "Bianco Asopo",
+                number: "041/250",
+                image: "https://static.wixstatic.com/media/beffc4_15a29dd698bf4a8f94ff295c57b453e4~mv2.jpg/v1/fill/w_530,h_524,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/beffc4_15a29dd698bf4a8f94ff295c57b453e4~mv2.jpg",
+                description: "Hot Wheels Lamborghini Huracán Sterrato menampilkan desain off-road agresif dengan body kit tebal, intake udara atap, dan ground clearance tinggi. Dilengkapi detail lampu depan, roof rack, serta pelek bergaya rally yang mempertegas tampilan petualangnya."
+            },
+            {
+                name: "'17 FORD GT",
+                year: "2024",
+                series: "HW Exotics",
+                color: "White",
+                number: "240/250",
+                image: "https://down-id.img.susercontent.com/file/id-11134207-7rasm-m3w7h6vkqnon62",
+                description: "Hot Wheels ’17 Ford GT menampilkan desain supercar modern dengan bodi aerodinamis rendah, garis-garis tajam, dan detail lampu depan yang futuristik. Dilengkapi sayap belakang besar dan pelek sporty, menonjolkan karakter kecepatan dan performa tinggi."
+            },
+            {
+                name: "SUBARU BRZ",
+                year: "2025",
+                series: "HW J-Imports",
+                color: "Bluebonnet",
+                number: "048/250",
+                image: "https://down-id.img.susercontent.com/file/id-11134207-7ras8-m5iaoj1yxfkmd3",
+                description: "Hot Wheels Subaru BRZ menampilkan desain coupe kompak dengan bodi aerodinamis, garis halus yang sporty, serta pelek bergaya racing. Dikenal dengan keseimbangan dan handling tajam, model ini merepresentasikan mobil sport ringan khas Jepang."
+            },
+            {
+                name: "SUBARU WRX STI",
+                year: "2023",
+                series: "HW J-Imports",
+                color: "Metalflake Dark Grey",
+                number: "021/250",
+                image: "https://m.media-amazon.com/images/I/71TAhvVS1VL._AC_UF1000,1000_QL80_.jpg",
+                description: "Hot Wheels Subaru WRX STI menampilkan desain sedan performa tinggi dengan kap berventilasi, sayap belakang besar, dan pelek bergaya rally. Terinspirasi dari dunia reli, model ini menggambarkan kekuatan dan kestabilan khas WRX STI di berbagai medan."
+            },
+            {
+                name: "FORD MUSTANG GTD",
+                year: "2025",
+                series: "Mustang 60th",
+                color: "Polymimetic Gray",
+                number: "034/250",
+                image: "https://down-id.img.susercontent.com/file/id-11134207-7rasg-m3ev83uln1eia9",
+                description: "Hot Wheels Ford Mustang GTD menampilkan desain agresif dengan bodi lebar, aerodinamika canggih, ventilasi besar di kap mesin, dan sayap belakang tinggi. Terinspirasi dari mobil balap GT, model ini menggabungkan kekuatan otot khas Mustang dengan performa trek kelas atas."
+            }
+        ];
+
+        // Initialize car properties
+        cars.forEach(c => {
+            c.likes = false;
+            c.bookmarked = false;
+            c.userRating = 0;
+            c.comments = [];
+        });
+
+        let currentUser = { name: "Collector", reviews: [] };
+        let currentCar = null;
+        let allCarCards = [];
+
+        // Save cars data to localStorage
+        function saveCarsToStorage() {
+            localStorage.setItem("carsData", JSON.stringify(cars));
+            localStorage.setItem("userData", JSON.stringify(currentUser));
+        }
+
+        // Load cars data from localStorage
+        function loadCarsFromStorage() {
+            const data = localStorage.getItem("carsData");
+            if (data) {
+                const parsed = JSON.parse(data);
+                parsed.forEach((car, i) => {
+                    if (cars[i]) {
+                        cars[i].likes = car.likes || false;
+                        cars[i].bookmarked = car.bookmarked || false;
+                        cars[i].userRating = car.userRating || 0;
+                        cars[i].comments = car.comments || [];
+                    }
+                });
+            }
+            
+            const userData = localStorage.getItem("userData");
+            if (userData) {
+                currentUser = JSON.parse(userData);
+            }
+        }
+
+        // Reset all stored data
+        function resetStorage() {
+            if (confirm("Are you sure you want to reset all data? This cannot be undone.")) {
+                localStorage.removeItem("carsData");
+                localStorage.removeItem("userData");
+                location.reload();
+            }
+        }
+
+        // Show/hide sections based on hash
+        function showSection(id) {
+            ["home", "carDetail", "profile", "liked", "bookmarked"].forEach(sec => {
+                document.getElementById(sec).classList.add("hidden");
+            });
+            document.getElementById(id).classList.remove("hidden");
+            
+            if (id === "profile") updateProfile();
+            if (id === "home") {
+                document.getElementById("searchBox").value = "";
+                searchCars();
+            }
+            if (id === "liked") renderLiked();
+            if (id === "bookmarked") renderBookmarks();
+        }
+
+        // Go back to home view
+        function goBack() {
+            location.hash = "home";
+        }
+        function goBackTo() {
+          location.hash = "home";
+          // document.getElementById("carDetail").classList.add("hidden");
+          // document.getElementById("homeSection").classList.remove("hidden");
+        }
+
+        // Load all cars into the grid
+        function loadCars() {
+            const container = document.getElementById("carList");
+            container.innerHTML = "";
+            allCarCards = [];
+            
+            cars.forEach((car, index) => {
+                const card = document.createElement("div");
+                card.className = "car-card rounded-lg overflow-hidden shadow-lg cursor-pointer";
+                card.innerHTML = `
+                    <img src="${car.image}" alt="${car.name}" class="w-full h-48 object-contain bg-gray-800 p-4">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-1 text-white">${car.name}</h3>
+                        <p class="text-sm text-gray-300 mb-1"><i class="fas fa-calendar-alt mr-1"></i> ${car.year}</p>
+                        <p class="text-sm text-gray-300"><i class="fas fa-tag mr-1"></i> ${car.series}</p>
+                        <div class="mt-3 flex justify-between items-center">
+                            <span class="text-xs px-2 py-1 bg-red-500 rounded-full">${car.number}</span>
+                            <button onclick="event.stopPropagation(); viewCar(${index})" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded transition">
+                                <i class="fas fa-eye mr-1"></i> View
+                            </button>
+                        </div>
+                    </div>
+                `;
+                card.addEventListener("click", () => viewCar(index));
+                container.appendChild(card);
+                allCarCards.push({ element: card, name: car.name.toLowerCase() });
+            });
+        }
+
+        // Search cars based on input
+        function searchCars() {
+            const keyword = document.getElementById("searchBox").value.toLowerCase();
+            allCarCards.forEach(card => {
+                const shouldShow = card.name.includes(keyword);
+                card.element.style.display = shouldShow ? "block" : "none";
+            });
+        }
+
+        // View car details
+        function viewCar(index) {
+            currentCar = cars[index];
+            
+            // Update car info
+            document.getElementById("carName").textContent = currentCar.name;
+            document.getElementById("carYear").innerHTML = `<span class="font-medium">Year:</span> ${currentCar.year}`;
+            document.getElementById("carSeries").innerHTML = `<span class="font-medium">Series:</span> ${currentCar.series}`;
+            document.getElementById("carColor").innerHTML = `<span class="font-medium">Color:</span> ${currentCar.color}`;
+            document.getElementById("carNumber").innerHTML = `<span class="font-medium">Number:</span> ${currentCar.number}`;
+            document.getElementById("carImage").src = currentCar.image;
+            document.getElementById("carDescription").textContent = currentCar.description;
+            
+            // Update like/bookmark buttons
+            document.getElementById("likeBtn").innerHTML = currentCar.likes 
+                ? '<i class="fas fa-star mr-2"></i> Remove Favorite' 
+                : '<i class="far fa-star mr-2"></i> Add Favorite';
+                
+            document.getElementById("bookmarkBtn").innerHTML = currentCar.bookmarked 
+                ? '<i class="fas fa-box-open mr-2"></i> Remove from Storage' 
+                : '<i class="far fa-box-open mr-2"></i> Add to Storage';
+            
+            // Update comments section
+            const commentSection = document.getElementById("commentSection");
+            commentSection.innerHTML = currentCar.comments.length 
+                ? "" 
+                : '<p class="text-gray-400 italic">No notes yet. Add your first note!</p>';
+                
+            currentCar.comments.forEach(comment => {
+                const commentDiv = document.createElement("div");
+                commentDiv.className = "details-box p-4 rounded-lg";
+                commentDiv.innerHTML = `
+                    <div class="flex items-center mb-2">
+                        <div class="bg-red-500 rounded-full w-8 h-8 flex items-center justify-center text-sm mr-2">
+                            <i class="fas fa-note"></i>
+                        </div>
+                        <p class="font-medium">${comment.split(" (")[0]}</p>
+                    </div>
+                    <p class="text-gray-300">${comment.split(": ")[1]}</p>
+                `;
+                commentSection.appendChild(commentDiv);
+            });
+            
+            // Render star rating
+            renderStars(currentCar.userRating || 0);
+            
+            // Show the detail section
+            showSection("carDetail");
+            window.scrollTo(0, 0);
+        }
+
+        // Toggle like status
+        function toggleLike() {
+            currentCar.likes = !currentCar.likes;
+            document.getElementById("likeBtn").innerHTML = currentCar.likes 
+                ? '<i class="fas fa-star mr-2"></i> Remove Favorite' 
+                : '<i class="far fa-star mr-2"></i> Add Favorite';
+            saveCarsToStorage();
+            updateProfile();
+        }
+
+        // Toggle bookmark status
+        function toggleBookmark() {
+            currentCar.bookmarked = !currentCar.bookmarked;
+            document.getElementById("bookmarkBtn").innerHTML = currentCar.bookmarked 
+                ? '<i class="fas fa-box-open mr-2"></i> Remove from Storage' 
+                : '<i class="far fa-box-open mr-2"></i> Add to Storage';
+            saveCarsToStorage();
+            updateProfile();
+        }
+
+        // Render star rating UI
+        function renderStars(selected) {
+            const container = document.getElementById("starContainer");
+            container.innerHTML = "";
+            
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement("span");
+                star.className = i <= selected ? "text-yellow-400 mx-1" : "text-gray-500 mx-1";
+                star.innerHTML = i <= selected ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                star.onclick = () => {
+                    currentCar.userRating = i;
+                    renderStars(i);
+                    
+                    // Add to user reviews if not already there
+                    if (!currentUser.reviews.some(r => r.includes(`${currentCar.name}`) && r.includes('rated'))) {
+                        currentUser.reviews.push(`You rated "${currentCar.name}" ${i} star${i > 1 ? 's' : ''}`);
+                    }
+                    
+                    updateProfile();
+                    saveCarsToStorage();
+                };
+                container.appendChild(star);
+            }
+        }
+
+        // Add a new comment
+        function addComment(event) {
+            event.preventDefault();
+            const name = document.getElementById("commentName").value.trim();
+            const text = document.getElementById("commentBox").value.trim();
+            
+            if (!name || !text) {
+                alert("Please enter both a note title and content.");
+                return;
+            }
+            
+            const rating = currentCar.userRating || 0;
+            const commentText = `${name} (${rating}★): ${text}`;
+            currentCar.comments.push(commentText);
+            
+            // Update comments display
+            const commentSection = document.getElementById("commentSection");
+            if (commentSection.firstChild?.classList?.contains("italic")) {
+                commentSection.innerHTML = "";
+            }
+            
+            const commentDiv = document.createElement("div");
+            commentDiv.className = "details-box p-4 rounded-lg";
+            commentDiv.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <div class="bg-red-500 rounded-full w-8 h-8 flex items-center justify-center text-sm mr-2">
+                        <i class="fas fa-note"></i>
+                    </div>
+                    <p class="font-medium">${name}</p>
+                </div>
+                <p class="text-gray-300">${text}</p>
+                <div class="mt-2 text-yellow-400">
+                    ${Array(rating).fill('<i class="fas fa-star text-sm"></i>').join('')}
+                    ${Array(5 - rating).fill('<i class="far fa-star text-sm"></i>').join('')}
+                </div>
+            `;
+            commentSection.appendChild(commentDiv);
+            
+            // Update user profile
+            currentUser.reviews.push(`Note on "${currentCar.name}": ${text.substring(0, 30)}${text.length > 30 ? '...' : ''}`);
+            currentUser.name = name;
+            
+            // Clear form
+            document.getElementById("commentBox").value = "";
+            document.getElementById("commentName").value = "";
+            
+            saveCarsToStorage();
+            updateProfile();
+        }
+
+        // Update profile view
+        function updateProfile() {
+            document.getElementById("profileName").textContent = currentUser.name || "Collector";
+            const list = document.getElementById("userReviews");
+            
+            // Update stats
+            document.getElementById("totalCars").textContent = cars.length;
+            document.getElementById("favoriteCars").textContent = cars.filter(c => c.likes).length;
+            document.getElementById("storedCars").textContent = cars.filter(c => c.bookmarked).length;
+            
+            if (currentUser.reviews.length === 0) {
+                list.innerHTML = '<p class="text-gray-400 italic">No notes yet. Start adding notes to your cars!</p>';
+                return;
+            }
+            
+            list.innerHTML = "";
+            currentUser.reviews.slice().reverse().forEach(item => {
+                const reviewItem = document.createElement("div");
+                reviewItem.className = "border-b border-gray-700 py-3 last:border-0";
+                reviewItem.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2 mt-1">
+                            <i class="fas ${item.includes('rated') ? 'fa-star' : 'fa-note'}"></i>
+                        </div>
+                        <p>${item}</p>
+                    </div>
+                `;
+                list.appendChild(reviewItem);
+            });
+        }
+
+        // Render liked cars
+        function renderLiked() {
+            const container = document.getElementById("likedList");
+            const likedCars = cars.filter(c => c.likes);
+            
+            if (likedCars.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 italic col-span-full text-center py-8">No favorite cars yet. Start adding some!</p>';
+                return;
+            }
+            
+            container.innerHTML = "";
+            likedCars.forEach((car, index) => {
+                const card = document.createElement("div");
+                card.className = "car-card rounded-lg overflow-hidden shadow-lg cursor-pointer";
+                card.innerHTML = `
+                    <img src="${car.image}" alt="${car.name}" class="w-full h-48 object-contain bg-gray-800 p-4">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-1 text-white">${car.name}</h3>
+                        <p class="text-sm text-gray-300 mb-1"><i class="fas fa-calendar-alt mr-1"></i> ${car.year}</p>
+                        <div class="mt-3 flex justify-between items-center">
+                            <span class="text-xs px-2 py-1 bg-red-500 rounded-full">${car.number}</span>
+                            <div class="flex space-x-2">
+                                <button onclick="event.stopPropagation(); viewCar(${cars.indexOf(car)})" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded transition">
+                                    <i class="fas fa-eye mr-1"></i> View
+                                </button>
+                                <button onclick="event.stopPropagation(); toggleLikeAtIndex(${cars.indexOf(car)})" class="text-sm bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded transition">
+                                    <i class="fas fa-star mr-1"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                card.addEventListener("click", () => viewCar(cars.indexOf(car)));
+                container.appendChild(card);
+            });
+        }
+
+        // Render bookmarked cars
+        function renderBookmarks() {
+            const container = document.getElementById("bookmarkList");
+            const bookmarkedCars = cars.filter(c => c.bookmarked);
+            
+            if (bookmarkedCars.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 italic col-span-full text-center py-8">No cars in storage yet. Start storing some!</p>';
+                return;
+            }
+            
+            container.innerHTML = "";
+            bookmarkedCars.forEach((car, index) => {
+                const card = document.createElement("div");
+                card.className = "car-card rounded-lg overflow-hidden shadow-lg cursor-pointer";
+                card.innerHTML = `
+                    <img src="${car.image}" alt="${car.name}" class="w-full h-48 object-contain bg-gray-800 p-4">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-1 text-white">${car.name}</h3>
+                        <p class="text-sm text-gray-300 mb-1"><i class="fas fa-calendar-alt mr-1"></i> ${car.year}</p>
+                        <div class="mt-3 flex justify-between items-center">
+                            <span class="text-xs px-2 py-1 bg-red-500 rounded-full">${car.number}</span>
+                            <div class="flex space-x-2">
+                                <button onclick="event.stopPropagation(); viewCar(${cars.indexOf(car)})" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded transition">
+                                    <i class="fas fa-eye mr-1"></i> View
+                                </button>
+                                <button onclick="event.stopPropagation(); toggleBookmarkAtIndex(${cars.indexOf(car)})" class="text-sm bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded transition">
+                                    <i class="fas fa-box-open mr-1"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                card.addEventListener("click", () => viewCar(cars.indexOf(car)));
+                container.appendChild(card);
+            });
+        }
+
+        // Helper function to toggle like from index
+        function toggleLikeAtIndex(index) {
+            cars[index].likes = !cars[index].likes;
+            saveCarsToStorage();
+            renderLiked();
+            updateProfile();
+        }
+
+        // Helper function to toggle bookmark from index
+        function toggleBookmarkAtIndex(index) {
+            cars[index].bookmarked = !cars[index].bookmarked;
+            saveCarsToStorage();
+            renderBookmarks();
+            updateProfile();
+        }
+
+        // Initialize the app
+        function init() {
+            loadCarsFromStorage();
+            loadCars();
+            
+            // Set up hash change listener
+            window.addEventListener("hashchange", () => {
+                const hash = location.hash.replace("#", "");
+                
+                if (hash.startsWith("car-")) {
+                    const index = parseInt(hash.split("-")[1]);
+                    if (!isNaN(index)) viewCar(index);
+                } else {
+                    showSection(hash || "home");
+                }
+            });
+            
+            // Trigger initial view
+            window.dispatchEvent(new HashChangeEvent("hashchange"));
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>
